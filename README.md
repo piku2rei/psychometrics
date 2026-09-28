@@ -1,1 +1,1 @@
-# smu_cte
+# psychometrics
