@@ -1,440 +1,646 @@
-
-<style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-.wrap { font-family: var(--font-sans); font-size: 15px; line-height: 1.7; color: var(--color-text-primary); padding: 0.5rem 0 2rem; }
-.activity-divider { height: 2px; background: var(--color-border-tertiary); margin: 2.5rem 0; border-radius: 2px; }
-.eyebrow { font-size: 11px; font-weight: 500; letter-spacing: 0.07em; text-transform: uppercase; color: var(--color-text-secondary); margin-bottom: 5px; }
-.act-title { font-size: 18px; font-weight: 500; margin-bottom: 4px; }
-.act-sub { font-size: 13px; color: var(--color-text-secondary); margin-bottom: 1.25rem; line-height: 1.5; }
-.instr-box { background: var(--color-background-secondary); border-left: 3px solid #185FA5; border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0; padding: 0.75rem 1rem; font-size: 13px; line-height: 1.6; color: var(--color-text-primary); margin-bottom: 1.25rem; }
-.divider { height: 0.5px; background: var(--color-border-tertiary); margin: 1.25rem 0; }
-.badge { display: inline-block; font-size: 10px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; padding: 2px 8px; border-radius: 99px; }
-.badge-coral { background: #FAECE7; color: #712B13; }
-.badge-teal { background: #E1F5EE; color: #085041; }
-.badge-purple { background: #EEEDFE; color: #3C3489; }
-.badge-amber { background: #FAEEDA; color: #633806; }
-.badge-blue { background: #E6F1FB; color: #0C447C; }
-
-.gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 10px; margin-bottom: 1.25rem; }
-.specimen-card { border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); overflow: hidden; cursor: pointer; transition: border-color 0.15s; }
-.specimen-card:hover { border-color: var(--color-border-secondary); }
-.specimen-card.revealed { border-color: #993C1D; }
-.spec-header { padding: 0.7rem 1rem; background: var(--color-background-secondary); border-bottom: 0.5px solid var(--color-border-tertiary); display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-.spec-label { font-size: 12px; font-weight: 500; color: var(--color-text-secondary); }
-.spec-discipline { font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; padding: 2px 7px; border-radius: 99px; }
-.spec-body { padding: 0.9rem 1rem; }
-.spec-output { font-size: 12px; line-height: 1.65; color: var(--color-text-primary); background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 0.65rem 0.8rem; margin-bottom: 0.75rem; font-family: var(--font-serif); }
-.spec-q { font-size: 13px; font-weight: 500; margin-bottom: 8px; }
-.spec-choices { display: flex; flex-direction: column; gap: 6px; }
-.spec-choice { background: var(--color-background-primary); border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); padding: 6px 10px; font-size: 12px; cursor: pointer; color: var(--color-text-primary); font-family: var(--font-sans); text-align: left; transition: background 0.12s; }
-.spec-choice:hover { background: var(--color-background-secondary); }
-.spec-choice.correct { background: #E1F5EE; border-color: #0F6E56; color: #085041; cursor: default; }
-.spec-choice.wrong { background: #FAECE7; border-color: #993C1D; color: #712B13; cursor: default; }
-.spec-choice:disabled { cursor: default; }
-.spec-reveal { display: none; margin-top: 8px; padding: 0.65rem 0.8rem; border-radius: var(--border-radius-md); font-size: 12px; line-height: 1.6; }
-.spec-reveal.show { display: block; }
-.reveal-correct { background: #E1F5EE; color: #085041; border: 0.5px solid #5DCAA5; }
-.reveal-wrong { background: #FAECE7; color: #712B13; border: 0.5px solid #F0997B; }
-
-.combined-task { border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); overflow: hidden; margin-bottom: 1.25rem; }
-.task-header { padding: 0.85rem 1.25rem; background: var(--color-background-secondary); border-bottom: 0.5px solid var(--color-border-tertiary); }
-.task-body { padding: 1.25rem; }
-.task-scenario { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 0.85rem 1rem; font-size: 13px; line-height: 1.6; margin-bottom: 1rem; border-left: 3px solid #534AB7; border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0; }
-.slider-row { display: flex; align-items: center; gap: 12px; margin-bottom: 0.5rem; }
-.slider-label { font-size: 13px; color: var(--color-text-secondary); width: 160px; flex-shrink: 0; line-height: 1.4; }
-.slider-val { font-size: 13px; font-weight: 500; min-width: 32px; text-align: right; }
-.axis-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--color-text-secondary); margin-bottom: 1.25rem; padding: 0 2px; }
-.result-panel { display: none; margin-top: 1rem; border-radius: var(--border-radius-md); padding: 0.85rem 1rem; font-size: 13px; line-height: 1.65; }
-.result-panel.show { display: block; }
-
-.sort-instructions { font-size: 13px; color: var(--color-text-secondary); margin-bottom: 1rem; }
-.sort-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 1rem; }
-.sort-col { border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); min-height: 120px; padding: 0.75rem; }
-.sort-col-header { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
-.sort-col-header.teal { color: #085041; }
-.sort-col-header.coral { color: #712B13; }
-.sort-pool { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 1.25rem; }
-.sort-chip { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); padding: 5px 10px; font-size: 12px; cursor: pointer; color: var(--color-text-primary); font-family: var(--font-sans); transition: background 0.12s; }
-.sort-chip:hover { background: var(--color-background-primary); border-color: var(--color-border-primary); }
-.sort-chip.placed-can { background: #E1F5EE; color: #085041; border-color: #5DCAA5; cursor: default; }
-.sort-chip.placed-cannot { background: #FAECE7; color: #712B13; border-color: #F0997B; cursor: default; }
-.sort-check-btn { background: #003D7C; color: white; border: none; border-radius: var(--border-radius-md); padding: 8px 18px; font-size: 13px; font-family: var(--font-sans); cursor: pointer; }
-.sort-check-btn:hover { opacity: 0.85; }
-.sort-feedback { display: none; margin-top: 10px; padding: 0.75rem 1rem; border-radius: var(--border-radius-md); font-size: 13px; line-height: 1.6; }
-.sort-feedback.show { display: block; background: var(--color-background-secondary); border: 0.5px solid var(--color-border-secondary); }
-.score-line { font-size: 15px; font-weight: 500; margin-bottom: 4px; }
-</style>
-
-<h2 class="sr-only">Module 2 activities: Activity A — the limitation gallery (identify AI failure types), and Activity B — the AI capability map (combined sort and rate exercise).</h2>
-
-<div class="wrap">
-
-  <div class="eyebrow">Activity A · Module 2</div>
-  <p class="act-title">The limitation gallery</p>
-  <p class="act-sub">6 real AI outputs, each with a different type of failure. Your task: identify what went wrong — and what student knowledge would be needed to catch it.</p>
-  <div class="instr-box">
-    Read each AI output carefully. Select the failure type you think best describes the problem, then read the explanation. Some failures are subtle — that is the point. If AI always failed obviously, students would catch it themselves.
-  </div>
-
-  <div class="gallery-grid" id="gallery"></div>
-
-  <div class="divider"></div>
-
-  <div class="eyebrow">Activity B · Module 2</div>
-  <p class="act-title">The AI capability map — combined activity</p>
-  <p class="act-sub">Two parts: first sort tasks into what AI does well vs poorly, then rate each task by how central it is to disciplinary learning. The intersection reveals your redesign priorities.</p>
-
-  <div class="instr-box">
-    <strong>Part 1:</strong> Sort the tasks below into two columns — AI does this well, or AI struggles with this. Trust your instincts first, then check. <strong>Part 2:</strong> Once sorted, you will rate how central each task is to disciplinary learning. The combination produces your personal risk map.
-  </div>
-
-  <p style="font-size:13px;font-weight:500;margin-bottom:6px;">Part 1 — Sort these tasks</p>
-  <p class="sort-instructions">Click each task to assign it. Select a column first, then click tasks to place them there.</p>
-
-  <div style="display:flex;gap:8px;margin-bottom:12px;">
-    <button class="sort-chip" id="col-can-btn" onclick="setTargetCol('can')" style="background:#E1F5EE;color:#085041;border-color:#5DCAA5;font-weight:500;">Place in: AI does well</button>
-    <button class="sort-chip" id="col-cannot-btn" onclick="setTargetCol('cannot')" style="background:#FAECE7;color:#712B13;border-color:#F0997B;font-weight:500;">Place in: AI struggles</button>
-  </div>
-
-  <div class="sort-pool" id="sort-pool"></div>
-
-  <div class="sort-columns">
-    <div class="sort-col" id="col-can">
-      <div class="sort-col-header teal"><i class="ti ti-circle-check" style="font-size:14px" aria-hidden="true"></i> AI does this well</div>
-      <div id="col-can-items" style="display:flex;flex-direction:column;gap:5px;"></div>
-    </div>
-    <div class="sort-col" id="col-cannot">
-      <div class="sort-col-header coral"><i class="ti ti-circle-x" style="font-size:14px" aria-hidden="true"></i> AI struggles with this</div>
-      <div id="col-cannot-items" style="display:flex;flex-direction:column;gap:5px;"></div>
-    </div>
-  </div>
-
-  <button class="sort-check-btn" id="check-sort-btn" onclick="checkSort()">Check my sorting</button>
-  <div class="sort-feedback" id="sort-feedback"></div>
-
-  <div id="part2-wrap" style="display:none;margin-top:1.5rem;">
-    <div class="divider"></div>
-    <p style="font-size:13px;font-weight:500;margin-bottom:4px;">Part 2 — How central is each task to disciplinary learning?</p>
-    <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:1rem;">Rate each task from 1 (peripheral) to 5 (absolutely central). Think about your own discipline — a task that is central in law may be peripheral in computing.</p>
-    <div id="slider-tasks"></div>
-    <button class="sort-check-btn" onclick="showRiskMap()">Generate my risk map</button>
-    <div class="result-panel" id="risk-result"></div>
-  </div>
-
-</div>
-
-<script>
-var specimens = [
-  {
-    id: "s1",
-    discipline: "Law",
-    discColor: "#EEEDFE",
-    discText: "#3C3489",
-    label: "AI output — legal analysis",
-    output: "In Sunshine Maritime Co v Atlas Freight Ltd [2019] SGHC 112, the Singapore High Court held that an exclusion clause in a bill of lading was ineffective to exclude liability for deliberate breach. The court applied the four-step framework from Photo Production Ltd v Securicor Transport Ltd [1980] AC 827, finding that the natural meaning of the clause did not cover the conduct in question.",
-    question: "What type of failure does this output contain?",
-    choices: [
-      { text: "Hallucinated case reference — the citation does not exist", correct: true },
-      { text: "Incorrect legal test — the wrong framework has been applied", correct: false },
-      { text: "Jurisdictional error — Singapore law does not apply here", correct: false },
-      { text: "No failure — this is accurate legal analysis", correct: false },
-    ],
-    correctFeedback: "Correct. Sunshine Maritime Co v Atlas Freight Ltd [2019] SGHC 112 does not exist. AI fabricated a plausible-sounding Singapore case citation, including a realistic neutral citation format. The Photo Production case is real. This is a classic hallucination pattern — real framework, invented precedent. A student without independent case verification skills would submit this without knowing.",
-    wrongFeedback: "Not quite. The most significant issue is that the primary case citation — Sunshine Maritime Co v Atlas Freight Ltd [2019] SGHC 112 — does not exist. AI invented a plausible-sounding Singapore High Court citation. This is a hallucination: the framework is real, the supporting case is fabricated. Students need the habit of verifying every citation independently.",
-  },
-  {
-    id: "s2",
-    discipline: "Economics",
-    discColor: "#E1F5EE",
-    discText: "#085041",
-    label: "AI output — policy analysis",
-    output: "Carbon taxes are widely regarded by economists as the most efficient instrument for reducing greenhouse gas emissions. By internalising the externality, they correct the market failure and achieve the socially optimal level of pollution. Most empirical evidence supports their effectiveness, and leading economists broadly agree that a carbon price of around $50–100 per tonne is appropriate for Singapore's context.",
-    question: "What type of failure does this output contain?",
-    choices: [
-      { text: "Factual error — carbon taxes are not considered efficient by economists", correct: false },
-      { text: "False consensus — overstates agreement and flattens genuine disciplinary debate", correct: true },
-      { text: "Irrelevant framing — this does not answer the question asked", correct: false },
-      { text: "No failure — this is accurate economic analysis", correct: false },
-    ],
-    correctFeedback: "Correct. This is the false consensus failure. While carbon taxes are supported by many economists, AI has presented contested policy territory as settled consensus. The specific price range given is not an agreed figure — it varies significantly across models, contexts, and political assumptions. A student submitting this would be presenting a particular position as economic orthodoxy when significant debate exists. This is one of AI's most insidious failure modes in social science disciplines: it sounds authoritative precisely because it smooths over disagreement.",
-    wrongFeedback: "The key failure here is false consensus. Carbon taxes are genuinely supported by many economists, but AI has overstated the degree of agreement and presented contested values ($50–100 per tonne) as if they were established figures. In disciplines where genuine intellectual debate matters — economics, law, social science — AI's tendency to produce confident-sounding consensus is a significant accuracy problem.",
-  },
-  {
-    id: "s3",
-    discipline: "Computing",
-    discColor: "#FAEEDA",
-    discText: "#633806",
-    label: "AI output — code review",
-    output: `def find_duplicates(lst):
-    seen = []
-    duplicates = []
-    for item in lst:
-        if item in seen:
-            duplicates.append(item)
-        else:
-            seen.append(item)
-    return duplicates
-
-# This function efficiently identifies duplicate values
-# in a list. Time complexity: O(n log n).`,
-    question: "What type of failure does this output contain?",
-    choices: [
-      { text: "Syntax error — the code will not run", correct: false },
-      { text: "Logic error — the function produces incorrect output", correct: false },
-      { text: "Performance error — incorrect complexity claim, inefficient implementation", correct: true },
-      { text: "No failure — this is correct and efficient code", correct: false },
-    ],
-    correctFeedback: "Correct. The code runs and produces correct output — but the comment is wrong. Using a list for 'seen' means each 'in' check is O(n), making the overall complexity O(n²), not O(n log n). An efficient implementation would use a set for O(1) lookups, giving true O(n) complexity. This is a subtle but important failure: the code works, the comment is plausible, but the claim is incorrect. A student who cannot analyse time complexity independently would submit this with a false performance claim.",
-    wrongFeedback: "The code runs correctly, so there is no syntax or logic error. The problem is in the comment: the function claims O(n log n) complexity but is actually O(n²) because it uses a list (not a set) for the 'seen' check. A set-based implementation would be genuinely O(n). This matters because the student has been asked to write efficient code — and AI has produced working but inefficient code with an incorrect performance claim attached.",
-  },
-  {
-    id: "s4",
-    discipline: "Accounting",
-    discColor: "#E6F1FB",
-    discText: "#0C447C",
-    label: "AI output — financial analysis",
-    output: "Based on the financial statements provided, TechCorp demonstrates strong liquidity with a current ratio of 2.4, well above the industry benchmark of 1.5–2.0. The company's profitability metrics are solid, with a net profit margin of 12.3%. Overall, the financial position appears healthy and the company is well-positioned for growth.",
-    question: "What type of failure does this output contain?",
-    choices: [
-      { text: "Ratio calculation error — the current ratio has been computed incorrectly", correct: false },
-      { text: "Contextually blind conclusion — ignores warning signals present in the data", correct: true },
-      { text: "Wrong benchmark — the industry standard cited is inaccurate", correct: false },
-      { text: "No failure — this is accurate financial analysis", correct: false },
-    ],
-    correctFeedback: "Correct. This is a contextual blindness failure. The ratios quoted may be accurate, but the conclusion — 'healthy and well-positioned for growth' — ignores information that would be visible to an analyst reading the full statements: for instance, that accounts receivable has grown faster than revenue for three consecutive quarters (a credit risk signal), or that the cash conversion cycle has lengthened significantly. AI produces optimistic, surface-level conclusions from headline numbers. Professional financial analysis requires reading behind the ratios — exactly what AI consistently fails to do.",
-    wrongFeedback: "The ratios quoted may be accurate. The failure is in the conclusion. A real financial analyst would look behind the headline numbers — checking whether the current ratio is driven by cash or by aging receivables, whether the profit margin is sustainable, whether the growth narrative is supported by cash flow data. AI produces tidy, confident conclusions from surface figures. The skill being assessed is precisely the ability to read what the numbers actually mean — which requires the full picture, not a summary.",
-  },
-  {
-    id: "s5",
-    discipline: "Social Science",
-    discColor: "#FAECE7",
-    discText: "#712B13",
-    label: "AI output — research methodology",
-    output: "To investigate the relationship between social media use and adolescent wellbeing, this study will employ a mixed-methods approach combining a quantitative survey of 500 participants aged 13–18 with semi-structured interviews with 20 participants. The survey will measure screen time and standardised wellbeing scales. This approach ensures both statistical validity and rich qualitative insight, providing a comprehensive understanding of the phenomenon.",
-    question: "What type of failure does this output contain?",
-    choices: [
-      { text: "Methodological contradiction — the methods are incompatible", correct: false },
-      { text: "Generic design — no original inquiry, merely restates standard approaches", correct: true },
-      { text: "Ethical oversight — no mention of consent for minor participants", correct: false },
-      { text: "No failure — this is a sound research proposal", correct: false },
-    ],
-    correctFeedback: "Correct. This is the generic design failure — and it is the most common AI failure in research-based assessments. The proposal is methodologically sound in a textbook sense. But it contains no original thinking: the research question is not novel, the design is the default mixed-methods template, and the justification ('ensures both statistical validity and rich qualitative insight') is a stock phrase. A strong research proposal should identify a specific gap in the literature, justify why this population and these measures are appropriate, and explain why this design — rather than a different one — is the best fit. AI produces competent-sounding proposals that have no intellectual fingerprint.",
-    wrongFeedback: "The methods are not incompatible and the design is technically sound. The issue is different: the proposal is entirely generic. There is no original research question emerging from a gap in the literature, no justification for why these specific measures or this specific sample are appropriate, and no distinctive intellectual contribution. AI produces well-structured proposals that tick methodological boxes without containing any actual research thinking. In social science research courses, this is often the hardest failure to articulate — which is why it is the most useful one to surface.",
-  },
-  {
-    id: "s6",
-    discipline: "Business",
-    discColor: "#EEEDFE",
-    discText: "#3C3489",
-    label: "AI output — strategic recommendation",
-    output: "Based on our analysis, we recommend that FreshMart pursue a market penetration strategy in Vietnam, leveraging its existing supply chain capabilities and brand recognition. Vietnam offers strong growth potential with a rising middle class and increasing demand for premium grocery products. Key risks include regulatory uncertainty and local competitor response, which can be mitigated through phased entry and local partnerships.",
-    question: "What type of failure does this output contain?",
-    choices: [
-      { text: "Strategy error — market penetration is the wrong framework here", correct: false },
-      { text: "Accountability gap — confident recommendation with no basis in the actual client context", correct: true },
-      { text: "Analytical error — the risk assessment is incomplete", correct: false },
-      { text: "No failure — this is reasonable strategic advice", correct: false },
-    ],
-    correctFeedback: "Correct. This is the accountability gap failure — and it is the most professionally significant. The recommendation sounds credible, but it is not grounded in anything specific about FreshMart: not its actual financials, not its real supply chain capabilities, not the specific competitive landscape it would face, not the regulatory environment as of this year. It is a plausible-sounding strategy template applied to a generic scenario. In a consulting context, this recommendation cannot be defended when a client asks 'why?' — because the reasoning is not tied to their actual situation. The ability to make recommendations that are specific, defensible, and grounded in real evidence is exactly what distinguishes a professional from a plausible text generator.",
-    wrongFeedback: "The strategy framing is not wrong, and the risk list is not obviously incomplete. The deeper issue is accountability: nothing in this recommendation is tied to FreshMart's actual capabilities, financial position, or competitive context. It is a template strategy applied to a name. A student who submits this has not demonstrated strategic analysis — they have demonstrated the ability to produce a convincing imitation of it. The question to ask: if a client said 'justify why Vietnam, why now, why this entry mode' — could the student answer? If the analysis was AI-generated, almost certainly not.",
-  },
-];
-
-var sortTasks = [
-  { id: "t1", text: "Write a 1,000-word essay on supply and demand", correct: "can" },
-  { id: "t2", text: "Defend a recommendation under live client questioning", correct: "cannot" },
-  { id: "t3", text: "Generate a first draft of a lab report", correct: "can" },
-  { id: "t4", text: "Identify a novel research gap from deep literature engagement", correct: "cannot" },
-  { id: "t5", text: "Summarise 10 academic papers into key themes", correct: "can" },
-  { id: "t6", text: "Apply a legal framework to a fact pattern never seen in training data", correct: "cannot" },
-  { id: "t7", text: "Write and run a standard Python data cleaning script", correct: "can" },
-  { id: "t8", text: "Exercise professional judgement with real consequences", correct: "cannot" },
-  { id: "t9", text: "Draft an outline for a business strategy report", correct: "can" },
-  { id: "t10", text: "Account for specific seminar discussion in a reflection piece", correct: "cannot" },
-];
-
-var sortAnswers = {};
-var targetCol = null;
-var sliderValues = {};
-
-function setTargetCol(col) {
-  targetCol = col;
-  document.getElementById('col-can-btn').style.outline = col === 'can' ? '2px solid #0F6E56' : 'none';
-  document.getElementById('col-cannot-btn').style.outline = col === 'cannot' ? '2px solid #993C1D' : 'none';
-}
-
-function buildGallery() {
-  var grid = document.getElementById('gallery');
-  specimens.forEach(function(sp) {
-    var card = document.createElement('div');
-    card.className = 'specimen-card';
-    card.id = 'card-' + sp.id;
-    var choicesHtml = sp.choices.map(function(c, i) {
-      return '<button class="spec-choice" onclick="checkSpecimen(\'' + sp.id + '\',' + i + ',this)">' + c.text + '</button>';
-    }).join('');
-    card.innerHTML =
-      '<div class="spec-header">' +
-        '<span class="spec-label">' + sp.label + '</span>' +
-        '<span class="spec-discipline" style="background:' + sp.discColor + ';color:' + sp.discText + '">' + sp.discipline + '</span>' +
-      '</div>' +
-      '<div class="spec-body">' +
-        '<div class="spec-output">' + sp.output.replace(/\n/g,'<br>') + '</div>' +
-        '<p class="spec-q">' + sp.question + '</p>' +
-        '<div class="spec-choices" id="choices-' + sp.id + '">' + choicesHtml + '</div>' +
-        '<div class="spec-reveal" id="reveal-' + sp.id + '"></div>' +
-      '</div>';
-    grid.appendChild(card);
-  });
-}
-
-function checkSpecimen(id, choiceIdx, btn) {
-  var sp = specimens.find(function(s){ return s.id === id; });
-  var container = document.getElementById('choices-' + id);
-  var btns = container.querySelectorAll('.spec-choice');
-  btns.forEach(function(b) { b.disabled = true; });
-  var isCorrect = sp.choices[choiceIdx].correct;
-  btn.classList.add(isCorrect ? 'correct' : 'wrong');
-  var reveal = document.getElementById('reveal-' + id);
-  reveal.textContent = isCorrect ? sp.correctFeedback : sp.wrongFeedback;
-  reveal.className = 'spec-reveal show ' + (isCorrect ? 'reveal-correct' : 'reveal-wrong');
-  if (isCorrect) document.getElementById('card-' + id).classList.add('revealed');
-}
-
-function buildSortPool() {
-  var pool = document.getElementById('sort-pool');
-  sortTasks.forEach(function(t) {
-    var chip = document.createElement('button');
-    chip.className = 'sort-chip';
-    chip.id = 'chip-' + t.id;
-    chip.textContent = t.text;
-    chip.onclick = function() { placeTask(t.id); };
-    pool.appendChild(chip);
-  });
-}
-
-function placeTask(tid) {
-  if (!targetCol) {
-    alert('Select a column first — "AI does well" or "AI struggles".');
-    return;
-  }
-  var task = sortTasks.find(function(t){ return t.id === tid; });
-  var chip = document.getElementById('chip-' + tid);
-  if (chip.classList.contains('placed-can') || chip.classList.contains('placed-cannot')) return;
-  sortAnswers[tid] = targetCol;
-  chip.classList.add('placed-' + targetCol);
-  chip.disabled = true;
-  var colItems = document.getElementById('col-' + targetCol + '-items');
-  var placed = document.createElement('div');
-  placed.style.cssText = 'font-size:12px;padding:4px 8px;border-radius:var(--border-radius-md);background:' + (targetCol === 'can' ? '#E1F5EE' : '#FAECE7') + ';color:' + (targetCol === 'can' ? '#085041' : '#712B13') + ';';
-  placed.textContent = task.text;
-  colItems.appendChild(placed);
-}
-
-function checkSort() {
-  var placed = Object.keys(sortAnswers).length;
-  if (placed < sortTasks.length) {
-    document.getElementById('sort-feedback').innerHTML = '<p style="color:var(--color-text-secondary);font-size:13px;">Please sort all ' + sortTasks.length + ' tasks before checking (' + placed + ' placed so far).</p>';
-    document.getElementById('sort-feedback').classList.add('show');
-    return;
-  }
-  var correct = 0;
-  var wrong = [];
-  sortTasks.forEach(function(t) {
-    if (sortAnswers[t.id] === t.correct) {
-      correct++;
-    } else {
-      wrong.push(t);
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f2e9">
+  <title>Psychometrics, One Question at a Time — Concept Coach</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f5f2e9;
+      --surface: #fffdf8;
+      --ink: #202d29;
+      --muted: #606d66;
+      --line: #d9ded5;
+      --green: #27594c;
+      --green-soft: #e8f0e9;
+      --orange: #bc6048;
+      --orange-soft: #f8e9df;
+      --gold: #c99a44;
+      --gold-soft: #f5edda;
+      --shadow: 0 18px 45px rgba(41, 54, 46, .08);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-synthesis: none;
+      text-rendering: optimizeLegibility;
     }
-  });
-  var fb = document.getElementById('sort-feedback');
-  var pct = Math.round(correct / sortTasks.length * 100);
-  var html = '<p class="score-line">' + correct + ' of ' + sortTasks.length + ' correct (' + pct + '%)</p>';
-  if (wrong.length > 0) {
-    html += '<p style="margin-bottom:6px;font-size:13px;">Tasks to reconsider:</p>';
-    wrong.forEach(function(t) {
-      var shouldBe = t.correct === 'can' ? 'AI does well' : 'AI struggles';
-      html += '<p style="font-size:12px;margin-bottom:4px;padding:5px 8px;background:var(--color-background-primary);border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);">' +
-        '<strong>' + t.text + '</strong> — should be: <em>' + shouldBe + '</em></p>';
-    });
-    html += '<p style="font-size:12px;color:var(--color-text-secondary);margin-top:8px;">Note: some tasks depend on disciplinary context. The classifications above reflect general AI performance — your discipline may have nuances that shift these.</p>';
-  } else {
-    html += '<p style="font-size:13px;">All correct. Proceed to Part 2 to map these against disciplinary centrality.</p>';
-  }
-  fb.innerHTML = html;
-  fb.classList.add('show');
-  document.getElementById('part2-wrap').style.display = 'block';
-  buildSliders();
-}
 
-function buildSliders() {
-  var container = document.getElementById('slider-tasks');
-  container.innerHTML = '';
-  sortTasks.forEach(function(t) {
-    sliderValues[t.id] = 3;
-    var isCan = (sortAnswers[t.id] || t.correct) === 'can';
-    var div = document.createElement('div');
-    div.style.cssText = 'margin-bottom:1rem;padding:0.75rem;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);background:var(--color-background-primary);';
-    div.innerHTML =
-      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">' +
-        '<span style="font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:0.05em;padding:2px 7px;border-radius:99px;background:' + (isCan ? '#E1F5EE' : '#FAECE7') + ';color:' + (isCan ? '#085041' : '#712B13') + '">' + (isCan ? 'AI does well' : 'AI struggles') + '</span>' +
-        '<span style="font-size:13px;font-weight:500;">' + t.text + '</span>' +
-      '</div>' +
-      '<div style="display:flex;align-items:center;gap:10px;">' +
-        '<span style="font-size:11px;color:var(--color-text-secondary);width:70px">Peripheral</span>' +
-        '<input type="range" min="1" max="5" step="1" value="3" style="flex:1" oninput="updateSlider(\'' + t.id + '\',this.value,this.nextElementSibling)">' +
-        '<span style="font-size:13px;font-weight:500;width:16px;text-align:center" id="sv-' + t.id + '">3</span>' +
-        '<span style="font-size:11px;color:var(--color-text-secondary);width:60px;text-align:right">Central</span>' +
-      '</div>';
-    container.appendChild(div);
-  });
-}
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--paper); color: var(--ink); line-height: 1.55; }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    a { color: var(--green); text-underline-offset: .18em; }
+    a:hover { color: #153d32; }
+    .app { width: min(100% - 36px, 980px); margin: 0 auto; padding: 28px 0 40px; }
+    .masthead { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-bottom: 20px; }
+    .brand { display: flex; align-items: center; gap: 11px; color: var(--ink); text-decoration: none; }
+    .brand-mark { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 11px; background: var(--green); color: #fff; font-family: Georgia, serif; font-size: 20px; }
+    .brand-name { font-size: 13px; font-weight: 750; letter-spacing: .08em; text-transform: uppercase; }
+    .lesson-tag { color: var(--muted); font-size: 13px; text-align: right; }
+    .progress-area { margin-bottom: 18px; }
+    .progress-meta { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 8px; color: var(--muted); font-size: 12px; }
+    .progress-track { display: grid; grid-template-columns: repeat(8, 1fr); gap: 5px; }
+    .progress-segment { height: 5px; border-radius: 99px; background: #dfe2d9; transition: background .18s ease; }
+    .progress-segment.done, .progress-segment.current { background: var(--green); }
+    .lesson-card { min-height: 590px; padding: clamp(25px, 5vw, 54px); border: 1px solid rgba(85, 102, 91, .14); border-radius: 24px; background: var(--surface); box-shadow: var(--shadow); }
+    .page { display: none; }
+    .page.active { display: block; animation: arrive .24s ease both; }
+    @keyframes arrive { from { opacity: .35; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+    .eyebrow { margin: 0 0 12px; color: var(--green); font-size: 11px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+    h1, h2, h3, p { margin-top: 0; }
+    h1, h2 { max-width: 720px; margin-bottom: 17px; font-family: Georgia, "Times New Roman", serif; font-weight: 500; letter-spacing: -.025em; line-height: 1.12; }
+    h1 { font-size: clamp(39px, 6vw, 62px); }
+    h2 { font-size: clamp(32px, 4.8vw, 46px); }
+    h3 { margin-bottom: 9px; font-size: 18px; line-height: 1.3; }
+    .lede { max-width: 670px; color: #46544d; font-size: 18px; }
+    .muted { color: var(--muted); }
+    .small { font-size: 13px; }
+    .hero { display: grid; grid-template-columns: 1.15fr .85fr; gap: 36px; align-items: center; }
+    .hero-art { display: grid; min-height: 235px; place-items: center; border: 1px solid var(--line); border-radius: 20px; background: #f8f6ef; }
+    .hero-art svg { width: min(100%, 270px); height: auto; }
+    .pill-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 25px 0 27px; }
+    .pill { padding: 6px 10px; border: 1px solid var(--line); border-radius: 999px; color: #43544b; font-size: 12px; }
+    .primary, .secondary, .choice, .option-button { min-height: 44px; padding: 10px 15px; border: 1px solid transparent; border-radius: 11px; font-weight: 700; transition: background .15s ease, border-color .15s ease, transform .15s ease; }
+    .primary { background: var(--green); color: #fff; }
+    .primary:hover { background: #1c493c; transform: translateY(-1px); }
+    .secondary { border-color: var(--line); background: var(--surface); color: var(--ink); }
+    .secondary:hover, .choice:hover, .option-button:hover { border-color: #91a59a; }
+    .choice { border-color: var(--line); background: var(--surface); color: var(--ink); text-align: left; }
+    .choice[aria-pressed="true"] { border-color: var(--green); background: var(--green-soft); box-shadow: inset 0 0 0 1px var(--green); }
+    .explain-box { margin: 22px 0; padding: 18px 20px; border-left: 4px solid var(--gold); border-radius: 0 13px 13px 0; background: var(--gold-soft); }
+    .explain-box p:last-child { margin-bottom: 0; }
+    .soft-box { padding: 18px; border: 1px solid var(--line); border-radius: 15px; background: #faf9f3; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 24px; }
+    .concept-card { padding: 20px; border: 1px solid var(--line); border-radius: 16px; background: #fbfaf5; }
+    .concept-card p:last-child { margin-bottom: 0; }
+    .chain { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; align-items: stretch; gap: 12px; margin: 27px 0; }
+    .chain-node { display: flex; min-height: 130px; flex-direction: column; justify-content: center; padding: 18px; border: 1px solid var(--line); border-radius: 15px; background: #fbfaf5; }
+    .chain-node strong { display: block; margin-bottom: 7px; color: var(--green); }
+    .chain-arrow { align-self: center; color: var(--gold); font-size: 24px; }
+    .interactive-layout { display: grid; grid-template-columns: minmax(230px, .88fr) 1.12fr; gap: 26px; align-items: center; margin-top: 23px; }
+    .target-wrap { padding: 16px; border: 1px solid var(--line); border-radius: 19px; background: #faf9f3; }
+    .target-svg { display: block; width: min(100%, 330px); margin: auto; }
+    .dart-point { fill: var(--orange); stroke: #fffdf8; stroke-width: 1.5; opacity: .92; }
+    .target-caption { margin: 8px 0 0; color: var(--muted); font-size: 12px; text-align: center; }
+    .control-panel { display: grid; gap: 15px; }
+    .control-panel .soft-box { padding: 17px; }
+    .slider-label { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 8px; font-weight: 700; }
+    .slider-label output { color: var(--green); }
+    input[type="range"] { width: 100%; accent-color: var(--green); }
+    .range-ends { display: flex; justify-content: space-between; color: var(--muted); font-size: 12px; }
+    .selection-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 11px; }
+    .selection-row .choice { flex: 1 1 165px; }
+    .dynamic-note { min-height: 50px; margin: 12px 0 0; color: var(--green); font-weight: 700; }
+    .item-selector { display: flex; flex-wrap: wrap; gap: 8px; margin: 24px 0 15px; }
+    .item-selector .choice { min-height: 40px; padding: 7px 12px; }
+    .item-prompt { margin-bottom: 0; font-family: Georgia, "Times New Roman", serif; font-size: 20px; line-height: 1.35; }
+    .metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 18px 0; }
+    .metric { padding: 15px; border: 1px solid var(--line); border-radius: 14px; background: #fbfaf5; }
+    .metric-label { display: block; color: var(--muted); font-size: 12px; }
+    .metric-value { display: block; margin: 2px 0 3px; color: var(--green); font-size: 25px; font-weight: 800; }
+    .student-grid { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 6px; margin: 15px 0 8px; }
+    .student { display: grid; aspect-ratio: 1.3; place-items: center; border: 1px solid #cfd5cc; border-radius: 7px; background: #eff0e9; color: #68726b; font-size: 10px; }
+    .student.correct { border-color: #68a08c; background: #dcece3; color: #244f41; font-weight: 800; }
+    .student.low-group { box-shadow: inset 0 -3px #d4a44b; }
+    .student.high-group { box-shadow: inset 0 -3px #598d79; }
+    .group-legend { display: flex; flex-wrap: wrap; gap: 8px 17px; color: var(--muted); font-size: 12px; }
+    .legend-key { display: inline-flex; align-items: center; gap: 6px; }
+    .legend-dot { width: 10px; height: 10px; border-radius: 3px; background: #dcece3; border: 1px solid #68a08c; }
+    .legend-dot.low { background: #faf4e3; border-color: #d4a44b; }
+    .legend-dot.high { background: #e1eee7; border-color: #598d79; }
+    .match-options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 18px 0; }
+    .match-feedback { min-height: 51px; }
+    .quiz-topline { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 22px 0 14px; color: var(--muted); font-size: 13px; }
+    .quiz-track { width: 40%; height: 6px; overflow: hidden; border-radius: 99px; background: #e3e5dd; }
+    .quiz-track span { display: block; height: 100%; border-radius: inherit; background: var(--green); transition: width .18s ease; }
+    .question-box { padding: 20px; border: 1px solid var(--line); border-radius: 16px; background: #fbfaf5; }
+    .question-box h3 { font-size: 20px; }
+    .option-list { display: grid; gap: 8px; margin: 17px 0; }
+    .option-button { border-color: var(--line); background: #fffefa; color: var(--ink); text-align: left; }
+    .option-button:disabled { cursor: default; opacity: .8; }
+    .option-button.is-correct { border-color: #68a08c; background: #e5f0e9; }
+    .option-button.is-wrong { border-color: #d48d74; background: #f9ebe5; }
+    .feedback { margin-top: 12px; padding: 13px 15px; border-radius: 11px; background: var(--green-soft); color: #294e41; }
+    .feedback.wrong { background: var(--orange-soft); color: #703e31; }
+    .feedback:empty { display: none; }
+    .quiz-actions { display: flex; justify-content: flex-end; margin-top: 14px; }
+    .review-list { display: grid; gap: 10px; margin: 20px 0; }
+    .review-row { padding: 13px 15px; border: 1px solid var(--line); border-radius: 12px; background: #fbfaf5; }
+    .review-row strong { display: block; margin-bottom: 4px; }
+    .screen-nav { display: flex; justify-content: space-between; align-items: center; gap: 14px; margin-top: 18px; }
+    .nav-status { color: var(--muted); font-size: 12px; text-align: center; }
+    .screen-nav button:disabled { opacity: .45; cursor: not-allowed; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+    details.sources { margin-top: 31px; border-top: 1px solid var(--line); padding-top: 16px; }
+    details.sources summary { color: var(--green); cursor: pointer; font-weight: 750; }
+    .source-list { display: grid; gap: 10px; margin: 14px 0 0; padding-left: 20px; color: #4f5b54; font-size: 13px; }
+    .source-list li { padding-left: 3px; }
+    .source-list a { font-weight: 650; }
+    .mini-note { color: var(--muted); font-size: 12px; }
+    .sr-feedback { color: var(--green); }
 
-function updateSlider(tid, val, display) {
-  sliderValues[tid] = parseInt(val);
-  display.textContent = val;
-}
+    @media (max-width: 700px) {
+      .app { width: min(100% - 22px, 980px); padding-top: 16px; }
+      .lesson-card { min-height: 0; padding: 25px 20px; border-radius: 18px; }
+      .hero, .interactive-layout { grid-template-columns: 1fr; gap: 21px; }
+      .hero-art { min-height: 175px; }
+      .hero-art svg { width: 205px; }
+      .two-col { grid-template-columns: 1fr; }
+      .chain { grid-template-columns: 1fr; gap: 5px; }
+      .chain-node { min-height: 90px; }
+      .chain-arrow { justify-self: center; transform: rotate(90deg); line-height: 1; }
+      .student-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+      .match-options { grid-template-columns: 1fr; }
+      .nav-status { max-width: 130px; }
+      .lesson-tag { font-size: 11px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="masthead">
+      <a class="brand" href="#top" aria-label="Concept Coach home">
+        <span class="brand-mark" aria-hidden="true">C</span>
+        <span class="brand-name">Concept Coach</span>
+      </a>
+      <div class="lesson-tag">Study studio <span aria-hidden="true">·</span> Psychometrics</div>
+    </header>
 
-function showRiskMap() {
-  var highRisk = [], medRisk = [], wellProtected = [];
-  sortTasks.forEach(function(t) {
-    var centrality = sliderValues[t.id] || 3;
-    var aiPerf = (sortAnswers[t.id] || t.correct) === 'can';
-    if (centrality >= 4 && aiPerf) highRisk.push({ text: t.text, c: centrality });
-    else if (centrality >= 4 && !aiPerf) wellProtected.push({ text: t.text, c: centrality });
-    else if (centrality <= 2 && aiPerf) medRisk.push({ text: t.text, c: centrality });
-  });
+    <div class="progress-area" aria-label="Lesson progress">
+      <div class="progress-meta"><span id="screen-label">Start here</span><span id="screen-number">1 of 8</span></div>
+      <div class="progress-track" id="progress-track" aria-hidden="true">
+        <span class="progress-segment current"></span><span class="progress-segment"></span><span class="progress-segment"></span><span class="progress-segment"></span><span class="progress-segment"></span><span class="progress-segment"></span><span class="progress-segment"></span><span class="progress-segment"></span>
+      </div>
+    </div>
 
-  var html = '<p style="font-size:14px;font-weight:500;margin-bottom:10px;">Your personal risk map</p>';
+    <main class="lesson-card" id="top">
+      <section class="page active" data-title="Start here" aria-hidden="false">
+        <div class="hero">
+          <div>
+            <p class="eyebrow">A slow, visual introduction</p>
+            <h1>A quiz score is a clue, not the skill itself.</h1>
+            <p class="lede">Psychometrics helps us ask whether our quiz scores are consistent—and whether they tell us what we meant them to tell us.</p>
+            <div class="pill-row" aria-label="Lesson topics"><span class="pill">One idea at a time</span><span class="pill">Economics examples</span><span class="pill">Try the controls</span></div>
+            <p class="small muted">Move at your own pace. You can go back whenever you like.</p>
+          </div>
+          <div class="hero-art" aria-hidden="true">
+            <svg viewBox="0 0 260 220" role="presentation">
+              <circle cx="130" cy="110" r="83" fill="#f1e5cb" stroke="#c8b994" stroke-width="2"/>
+              <circle cx="130" cy="110" r="59" fill="#e8d6ad" stroke="#c8b994" stroke-width="2"/>
+              <circle cx="130" cy="110" r="36" fill="#c6dacf" stroke="#84a999" stroke-width="2"/>
+              <circle cx="130" cy="110" r="15" fill="#bc6048"/>
+              <circle cx="119" cy="96" r="5" fill="#27594c"/><circle cx="141" cy="101" r="5" fill="#27594c"/>
+              <circle cx="147" cy="121" r="5" fill="#27594c"/><circle cx="124" cy="126" r="5" fill="#27594c"/>
+              <path d="M 41 190 C 83 166, 178 166, 218 190" fill="none" stroke="#27594c" stroke-width="2" stroke-dasharray="4 6"/>
+            </svg>
+          </div>
+        </div>
+        <div class="explain-box"><p><strong>Our running example:</strong> a student should be able to explain how a change in demand affects market equilibrium—not just repeat a definition.</p></div>
+        <details class="sources">
+          <summary>Sources and reading trail</summary>
+          <ol class="source-list">
+            <li><a href="https://www.testingstandards.net/open-access-files.html" target="_blank" rel="noreferrer">AERA, APA, &amp; NCME — Standards for Educational and Psychological Testing</a> (2014; open-access materials). Guidance on score interpretation, reliability, and validity.</li>
+            <li><a href="https://ncme.org/resources/professional-learning/glossary/" target="_blank" rel="noreferrer">National Council on Measurement in Education (NCME) — Assessment Glossary</a>. Plain definitions for constructs, reliability, validity, and item analysis.</li>
+            <li><a href="https://ncme.org/document/educational-measurement-fifth-edition-chapter-04/" target="_blank" rel="noreferrer">Lane &amp; Marion — “Validity and Validation,” in Educational Measurement, 5th edition</a> (NCME open-access chapter).</li>
+            <li><a href="https://ncme.org/document/educational-measurement-fifth-edition-chapter-05/" target="_blank" rel="noreferrer">Lee &amp; Harris — “Reliability in Educational Measurement,” in Educational Measurement, 5th edition</a> (NCME open-access chapter).</li>
+            <li><a href="https://ncme.org/document/digital-module-08-foundations-of-operational-item-analysis/" target="_blank" rel="noreferrer">Yoo &amp; Hambleton (2019) — “Foundations of Operational Item Analysis,” NCME digital module 08</a>. Classroom item statistics and interpretation.</li>
+            <li><a href="https://testingservices.utexas.edu/scanning/interpreting-test-results" target="_blank" rel="noreferrer">University of Texas at Austin, Testing &amp; Evaluation Services — Interpreting Test Results</a>. Practical guidance on difficulty, discrimination, and cautious interpretation.</li>
+          </ol>
+          <p class="mini-note">The lesson uses simplified classroom examples. The target and 30-student class are illustrations, not actual test data or a substitute for a full validation study.</p>
+        </details>
+      </section>
 
-  if (highRisk.length > 0) {
-    html += '<div style="background:#FAECE7;border-radius:var(--border-radius-md);padding:0.75rem;margin-bottom:8px;border:0.5px solid #F0997B;">';
-    html += '<p style="font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:0.06em;color:#712B13;margin-bottom:5px;">Redesign priority — central to discipline, AI does well</p>';
-    highRisk.forEach(function(t){ html += '<p style="font-size:12px;color:#712B13;margin-bottom:2px;">· ' + t.text + '</p>'; });
-    html += '</div>';
-  }
-  if (wellProtected.length > 0) {
-    html += '<div style="background:#E1F5EE;border-radius:var(--border-radius-md);padding:0.75rem;margin-bottom:8px;border:0.5px solid #5DCAA5;">';
-    html += '<p style="font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:0.06em;color:#085041;margin-bottom:5px;">Well protected — central to discipline, AI struggles</p>';
-    wellProtected.forEach(function(t){ html += '<p style="font-size:12px;color:#085041;margin-bottom:2px;">· ' + t.text + '</p>'; });
-    html += '</div>';
-  }
-  if (medRisk.length > 0) {
-    html += '<div style="background:#FAEEDA;border-radius:var(--border-radius-md);padding:0.75rem;margin-bottom:8px;border:0.5px solid #EF9F27;">';
-    html += '<p style="font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:0.06em;color:#633806;margin-bottom:5px;">Monitor — peripheral but AI does well</p>';
-    medRisk.forEach(function(t){ html += '<p style="font-size:12px;color:#633806;margin-bottom:2px;">· ' + t.text + '</p>'; });
-    html += '</div>';
-  }
+      <section class="page" data-title="Name the skill" aria-hidden="true">
+        <p class="eyebrow">01 / Start with the goal</p>
+        <h2>First, name the skill you want to measure.</h2>
+        <p class="lede">A <strong>construct</strong> is the skill or idea a test is meant to measure. It is the target behind the score.</p>
+        <div class="two-col">
+          <div class="concept-card"><p class="eyebrow">The target</p><h3>Demand-shock reasoning</h3><p>A student can trace a demand shift through to equilibrium and explain why price and quantity change.</p></div>
+          <div class="concept-card"><p class="eyebrow">Not quite the same</p><h3>Remembering a definition</h3><p>A student can repeat what “demand” means. That knowledge may help, but it is not the whole target if the goal is to apply a model.</p></div>
+        </div>
+        <div class="explain-box"><p><strong>Design question:</strong> What should a student be able to do with the idea after learning it?</p></div>
+      </section>
 
-  html += '<p style="font-size:12px;color:var(--color-text-secondary);margin-top:10px;line-height:1.6;">Tasks in the redesign priority zone are where your assessment design matters most. If these tasks appear in your current course assessments, they are worth examining through the two-question test: could a student who understood nothing produce a passing submission? Would you be able to tell the difference?</p>';
-  html += '<button onclick="sendPrompt(\'Help me redesign one of my high-risk assessments using the two-question test\')" style="margin-top:10px;font-size:13px;">Help me redesign a high-risk assessment ↗</button>';
+      <section class="page" data-title="Measure through clues" aria-hidden="true">
+        <p class="eyebrow">02 / The score is indirect</p>
+        <h2>We see an answer; we infer the skill.</h2>
+        <p class="lede">You can read a student's written answer. You cannot directly see the reasoning skill behind it. So a score is evidence—a clue we use to make an inference, or a reasoned judgment.</p>
+        <div class="chain" aria-label="From skill to score and back to an interpretation">
+          <div class="chain-node"><strong>1. Construct</strong><span>Can apply a demand shock to a new case.</span></div><span class="chain-arrow" aria-hidden="true">→</span>
+          <div class="chain-node"><strong>2. Observable response</strong><span>A graph, prediction, and explanation we can read.</span></div><span class="chain-arrow" aria-hidden="true">→</span>
+          <div class="chain-node"><strong>3. Inference</strong><span>We judge what the response suggests about the skill.</span></div>
+        </div>
+        <div class="soft-box"><p><strong>Why one question can mislead:</strong> a student might know the idea but misread the wording, or guess correctly without understanding. Several well-chosen questions give a fuller set of clues.</p></div>
+      </section>
 
-  var panel = document.getElementById('risk-result');
-  panel.innerHTML = html;
-  panel.className = 'result-panel show';
-  panel.style.background = 'var(--color-background-secondary)';
-  panel.style.border = '0.5px solid var(--color-border-secondary)';
-}
+      <section class="page" data-title="Reliability" aria-hidden="true">
+        <p class="eyebrow">03 / Reliability</p>
+        <h2>Reliability asks: are the results consistent?</h2>
+        <p class="lede"><strong>Reliability</strong> is the consistency of scores when we measure under similar conditions. In this target picture, each dot is one result from an equivalent short quiz.</p>
+        <div class="interactive-layout">
+          <div class="target-wrap">
+            <svg class="target-svg" viewBox="0 0 300 300" data-mode="reliability" role="img" aria-label="A target showing repeated quiz results">
+              <circle cx="150" cy="150" r="120" fill="#f1e5cb" stroke="#bcae8e" stroke-width="2"/><circle cx="150" cy="150" r="88" fill="#ead9b3" stroke="#bcae8e" stroke-width="2"/><circle cx="150" cy="150" r="57" fill="#c9ddd2" stroke="#83a491" stroke-width="2"/><circle cx="150" cy="150" r="27" fill="#e9b08e" stroke="#bc6048" stroke-width="2"/><g class="darts"></g><circle cx="150" cy="150" r="4" fill="#263c35"/>
+            </svg>
+            <p class="target-caption">Target centre = the intended result. Dots = scores from similar attempts.</p>
+          </div>
+          <div class="control-panel">
+            <div class="soft-box">
+              <label class="slider-label">Consistency <output class="consistency-output" aria-live="polite">78 / 100</output><input class="consistency-slider" type="range" min="0" max="100" value="78" aria-label="Illustration of score consistency"></label>
+              <div class="range-ends"><span>Scattered</span><span>Tightly grouped</span></div>
+              <p class="dynamic-note consistency-note" aria-live="polite">Most results are close together.</p>
+            </div>
+            <div class="explain-box"><p><strong>Economics example:</strong> if equivalent versions of the same demand-shift recall question produce similar scores, the scores may be consistent for that task.</p></div>
+            <p class="mini-note">This slider changes the picture only. It does not calculate a reliability coefficient.</p>
+          </div>
+        </div>
+      </section>
 
-buildGallery();
-buildSortPool();
-</script>
+      <section class="page" data-title="Validity" aria-hidden="true">
+        <p class="eyebrow">04 / Validity is a different question</p>
+        <h2>Validity asks: are we measuring the intended skill?</h2>
+        <p class="lede"><strong>Validity</strong> is how well evidence supports the meaning we want to give a score. Here, the centre is the goal: applying a demand shock, not just recalling a term.</p>
+        <div class="interactive-layout">
+          <div class="target-wrap">
+            <svg class="target-svg" viewBox="0 0 300 300" data-mode="validity" role="img" aria-label="A target comparing results with the intended learning goal">
+              <circle cx="150" cy="150" r="120" fill="#f1e5cb" stroke="#bcae8e" stroke-width="2"/><circle cx="150" cy="150" r="88" fill="#ead9b3" stroke="#bcae8e" stroke-width="2"/><circle cx="150" cy="150" r="57" fill="#c9ddd2" stroke="#83a491" stroke-width="2"/><circle cx="150" cy="150" r="27" fill="#e9b08e" stroke="#bc6048" stroke-width="2"/><g class="darts"></g><circle cx="150" cy="150" r="4" fill="#263c35"/>
+            </svg>
+            <p class="target-caption">Same target idea. The selected quiz task changes where the results cluster.</p>
+          </div>
+          <div class="control-panel">
+            <div class="soft-box">
+              <strong>What does the quiz ask students to do?</strong>
+              <div class="selection-row" role="group" aria-label="Select what the quiz measures">
+                <button class="choice validity-choice" type="button" data-validity="recall" aria-pressed="true">Recall a definition</button>
+                <button class="choice validity-choice" type="button" data-validity="apply" aria-pressed="false">Apply a demand shock</button>
+              </div>
+              <label class="slider-label" style="margin-top:17px">Consistency <output class="consistency-output">78 / 100</output></label>
+              <input class="consistency-slider" type="range" min="0" max="100" value="78" aria-label="Illustration of consistency, separate from target alignment">
+              <div class="range-ends"><span>Scattered</span><span>Tightly grouped</span></div>
+              <p class="dynamic-note validity-note" aria-live="polite">Consistent scores—but recall is not the application goal.</p>
+            </div>
+            <div class="explain-box"><p><strong>The distinction:</strong> a quiz can consistently test recall, yet its scores are weak evidence that students can apply a model. A better-aligned task asks them to explain a new demand shock and its effect on equilibrium.</p></div>
+          </div>
+        </div>
+        <p class="mini-note">The target is a metaphor. Reliability and validity are distinct but connected: consistent scores can support a validity argument, but consistency alone does not prove the interpretation. Real validity work gathers evidence for a specific score use.</p>
+      </section>
+
+      <section class="page" data-title="Read item clues" aria-hidden="true">
+        <p class="eyebrow">05 / Two clues from a class</p>
+        <h2>Item analysis helps you inspect quiz questions.</h2>
+        <p class="lede"><strong>Item analysis</strong> means looking at how students answered each question. Explore three simulated Economics and Society items from one class of 30.</p>
+        <div class="item-selector" role="group" aria-label="Choose a simulated quiz item">
+          <button class="choice item-choice" type="button" data-item="recall" aria-pressed="true">1 · Recall</button>
+          <button class="choice item-choice" type="button" data-item="apply" aria-pressed="false">2 · Apply</button>
+          <button class="choice item-choice" type="button" data-item="analyze" aria-pressed="false">3 · Analyze</button>
+        </div>
+        <div class="soft-box"><p class="eyebrow">The question</p><p class="item-prompt" id="item-prompt" aria-live="polite"></p></div>
+        <div class="metrics" aria-live="polite">
+          <div class="metric"><span class="metric-label">Proportion correct (p) · item difficulty</span><strong class="metric-value" id="difficulty-value">—</strong><span class="small muted" id="difficulty-note"></span></div>
+          <div class="metric"><span class="metric-label">High group minus low group · discrimination clue</span><strong class="metric-value" id="discrimination-value">—</strong><span class="small muted" id="discrimination-note"></span></div>
+        </div>
+        <div class="group-legend"><span class="legend-key"><i class="legend-dot"></i> Correct answer</span><span class="legend-key"><i class="legend-dot low"></i> Lowest 10 on other questions</span><span class="legend-key"><i class="legend-dot high"></i> Highest 10 on other questions</span></div>
+        <div class="student-grid" id="student-grid" role="img" aria-label="Thirty simulated students; green tiles answered correctly"></div>
+        <p class="mini-note" id="class-caution">The p index here is proportion correct, not a statistical significance test. These simulated class results are clues, not proof of validity; with 30 students, one response changes the percentage by about 3 points.</p>
+      </section>
+
+      <section class="page" data-title="Write a better quiz" aria-hidden="true">
+        <p class="eyebrow">06 / Put the ideas to work</p>
+        <h2>Write the question to match the learning goal.</h2>
+        <div class="soft-box"><p class="eyebrow">Learning goal</p><p><strong>Given a market change, explain how a demand shift changes equilibrium price and quantity.</strong></p></div>
+        <div class="two-col">
+          <div class="concept-card"><p class="eyebrow">Recall-only version</p><h3>“What is demand?”</h3><p>This may check a useful definition. By itself, it does not show that a student can apply a demand shock and reason through the equilibrium change.</p></div>
+          <div class="concept-card"><p class="eyebrow">Better-aligned version</p><h3>“Assume café meals are a normal good. Average income rises, with other factors unchanged. Show the demand shift, predict the new equilibrium price and quantity, and explain why.”</h3><p>The student must apply the idea, show the change, and explain the chain of reasoning.</p></div>
+        </div>
+        <div class="explain-box">
+          <p><strong>Quick check:</strong> Which question gives better evidence for the stated goal?</p>
+          <div class="match-options" role="group" aria-label="Choose the question that better matches the goal">
+            <button class="choice match-choice" type="button" data-match="recall" aria-pressed="false">“Define equilibrium price.”</button>
+            <button class="choice match-choice" type="button" data-match="apply" aria-pressed="false">“Use an income change to predict and explain the new equilibrium.”</button>
+          </div>
+          <p class="match-feedback" id="match-feedback" aria-live="polite"></p>
+        </div>
+        <p class="small muted">After writing, check that the scoring guide rewards the explanation you asked for—not only a memorized phrase.</p>
+      </section>
+
+      <section class="page" data-title="Five-question self-check" aria-hidden="true">
+        <p class="eyebrow">07 / Your turn</p>
+        <h2>Five small questions. Feedback after every answer.</h2>
+        <p class="lede">Choose one answer. Read the feedback before moving on. At the end, you can review all five.</p>
+        <div id="quiz-area" aria-live="polite"></div>
+      </section>
+    </main>
+
+    <nav class="screen-nav" aria-label="Lesson screens">
+      <button class="secondary" id="previous-button" type="button" disabled>Back</button>
+      <span class="nav-status" id="nav-status" aria-live="polite">Start whenever you’re ready</span>
+      <button class="primary" id="next-button" type="button">Start with the first idea</button>
+    </nav>
+  </div>
+
+  <script>
+    (() => {
+      const pages = [...document.querySelectorAll('.page')];
+      const progressSegments = [...document.querySelectorAll('.progress-segment')];
+      const screenLabel = document.getElementById('screen-label');
+      const screenNumber = document.getElementById('screen-number');
+      const previousButton = document.getElementById('previous-button');
+      const nextButton = document.getElementById('next-button');
+      const navStatus = document.getElementById('nav-status');
+      const state = { screen: 0, consistency: 78, validity: 'recall', item: 'recall', match: null, question: 0, answers: [], quizComplete: false };
+
+      const itemData = {
+        recall: {
+          prompt: 'Which factor can shift the demand curve for café meals?',
+          correctRanks: Array.from({ length: 26 }, (_, index) => index + 5),
+          description: 'Name a non-price factor, such as income when meals are a normal good.'
+        },
+        apply: {
+          prompt: 'Assume café meals are a normal good. Average income rises, with other factors unchanged. What happens to demand?',
+          correctRanks: [2, 5, 7, 9, 10, 12, 14, 16, 18, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30],
+          description: 'Apply the normal-good assumption to a new income scenario.'
+        },
+        analyze: {
+          prompt: 'Demand shifts right while supply shifts left. Explain what must happen to equilibrium price and why quantity may be uncertain.',
+          correctRanks: [12, 16, 18, 20, 21, 22, 23, 24, 25, 26, 29, 30],
+          description: 'Reason about two simultaneous shifts and the limits of what the graph tells us.'
+        }
+      };
+
+      const questions = [
+        {
+          prompt: 'Which one is the construct in our running example?',
+          options: ['A score of 7 out of 10', 'The ability to explain how a demand shock changes equilibrium', 'A green mark on the answer sheet', 'The time allowed for the quiz'],
+          correct: 1,
+          why: 'The construct is the skill the quiz is meant to measure. The score and answer sheet are observations, not the skill itself.'
+        },
+        {
+          prompt: 'A student gets similar scores on equivalent quizzes under similar conditions. What does that mainly suggest?',
+          options: ['The scores are consistent (reliable)', 'The quiz must measure every course goal', 'Every question has the same difficulty', 'The student guessed every answer'],
+          correct: 0,
+          why: 'Similar results under similar conditions are evidence of consistency, which is the basic idea of reliability.'
+        },
+        {
+          prompt: 'The goal is to apply demand shocks, but every question asks students to repeat definitions. What is the main concern?',
+          options: ['The quiz is too long', 'The scores might be consistent but weak evidence for the application goal', 'The class has too many students', 'The definitions cannot be scored'],
+          correct: 1,
+          why: 'A stable recall score can still miss the intended application skill. Reliability alone does not show that the score supports the desired interpretation.'
+        },
+        {
+          prompt: 'Eighteen of 30 students answer an item correctly. What does its proportion-correct index tell us?',
+          options: ['The item is easy for this group because 60% answered correctly', 'The item is difficult because 18 is a small number', 'The question is valid because it has a percentage', 'The item discriminates by 60 points'],
+          correct: 0,
+          why: '18 ÷ 30 = 0.60, so 60% answered correctly. In this index, a higher proportion correct generally means an easier item for this group.'
+        },
+        {
+          prompt: 'Eight of the top 10 students and two of the bottom 10 answer correctly. What is the simple high-minus-low difference?',
+          options: ['+60 percentage points', '+20 percentage points', '−60 percentage points', '80%'],
+          correct: 0,
+          why: 'The top group is at 80% and the bottom group at 20%, so 80% − 20% = +60 percentage points. It is a useful clue, not proof that the item is valid.'
+        }
+      ];
+
+      function consistencyLabel(value) {
+        if (value < 34) return 'Results are quite scattered.';
+        if (value < 68) return 'Results show some variation.';
+        return 'Most results are close together.';
+      }
+
+      function normalRandom() {
+        const first = Math.max(Math.random(), 0.00001);
+        const second = Math.random();
+        return Math.sqrt(-2 * Math.log(first)) * Math.cos(2 * Math.PI * second);
+      }
+
+      function renderTargets() {
+        const spread = 4 + (100 - state.consistency) * 0.37;
+        document.querySelectorAll('.consistency-slider').forEach((slider) => { slider.value = state.consistency; });
+        document.querySelectorAll('.consistency-output').forEach((output) => { output.textContent = `${state.consistency} / 100`; });
+        document.querySelectorAll('.consistency-note').forEach((note) => { note.textContent = consistencyLabel(state.consistency); });
+        document.querySelectorAll('.target-svg').forEach((svg) => {
+          const group = svg.querySelector('.darts');
+          group.replaceChildren();
+          const aligned = svg.dataset.mode === 'reliability' || state.validity === 'apply';
+          const centerX = aligned ? 150 : 199;
+          const centerY = aligned ? 150 : 122;
+          svg.setAttribute('aria-label', aligned ? 'Repeated quiz results clustered around the intended goal' : 'Repeated quiz results are consistent but off the intended goal');
+          for (let index = 0; index < 15; index += 1) {
+            const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            circle.setAttribute('cx', String(Math.max(22, Math.min(278, centerX + normalRandom() * spread))));
+            circle.setAttribute('cy', String(Math.max(22, Math.min(278, centerY + normalRandom() * spread))));
+            circle.setAttribute('r', index % 4 === 0 ? '5.5' : '4.7');
+            circle.setAttribute('class', 'dart-point');
+            group.append(circle);
+          }
+        });
+        document.querySelectorAll('.validity-choice').forEach((button) => {
+          button.setAttribute('aria-pressed', String(button.dataset.validity === state.validity));
+        });
+        const validityNote = document.querySelector('.validity-note');
+        if (validityNote) {
+          validityNote.textContent = state.validity === 'recall'
+            ? `${state.consistency >= 68 ? 'Consistent scores' : 'Scores with this spread'}—but recall is not the application goal.`
+            : `${state.consistency >= 68 ? 'Consistent' : 'Variable'} results that target the application goal.`;
+        }
+      }
+
+      function renderItem() {
+        const item = itemData[state.item];
+        document.getElementById('item-prompt').textContent = item.prompt;
+        document.querySelectorAll('.item-choice').forEach((button) => {
+          button.setAttribute('aria-pressed', String(button.dataset.item === state.item));
+        });
+        const correctCount = item.correctRanks.length;
+        const lowerCorrect = item.correctRanks.filter((rank) => rank <= 10).length;
+        const higherCorrect = item.correctRanks.filter((rank) => rank >= 21).length;
+        const proportion = correctCount / 30;
+        const lowerRate = lowerCorrect / 10;
+        const higherRate = higherCorrect / 10;
+        const difference = higherRate - lowerRate;
+        document.getElementById('difficulty-value').textContent = `${Math.round(proportion * 100)}%`;
+        document.getElementById('difficulty-note').textContent = `${correctCount} of 30 correct · ${proportion.toFixed(2)}. ${proportion >= 0.75 ? 'Easier for this class.' : proportion >= 0.45 ? 'Middle range for this class.' : 'More difficult for this class.'}`;
+        document.getElementById('discrimination-value').textContent = `${difference >= 0 ? '+' : ''}${Math.round(difference * 100)} points`;
+        document.getElementById('discrimination-note').textContent = `${higherCorrect}/10 high group − ${lowerCorrect}/10 low group. ${difference > 0 ? 'Higher scorers more often got it right.' : difference < 0 ? 'Lower scorers more often got it right; investigate.' : 'The two groups were equal on this item.'}`;
+        const grid = document.getElementById('student-grid');
+        grid.replaceChildren();
+        for (let rank = 1; rank <= 30; rank += 1) {
+          const tile = document.createElement('span');
+          tile.className = `student${item.correctRanks.includes(rank) ? ' correct' : ''}${rank <= 10 ? ' low-group' : ''}${rank >= 21 ? ' high-group' : ''}`;
+          tile.textContent = `S${String(rank).padStart(2, '0')}`;
+          tile.title = `Student ${rank}: ${item.correctRanks.includes(rank) ? 'correct' : 'incorrect'}${rank <= 10 ? ', lower group' : rank >= 21 ? ', higher group' : ''}`;
+          grid.append(tile);
+        }
+        grid.setAttribute('aria-label', `${correctCount} of 30 simulated students answered correctly. Students are ordered by their score on other questions.`);
+        document.getElementById('class-caution').textContent = `These are simulated results. Students are ordered by their score on other questions, not this item. This screen uses a simple high-minus-low discrimination index; other methods also exist. The p index is proportion correct, not a significance test; with 30 students, one response changes the percentage by about 3 points. Item statistics are clues, not proof of validity.`;
+      }
+
+      function renderQuiz() {
+        const area = document.getElementById('quiz-area');
+        area.replaceChildren();
+        if (state.quizComplete) {
+          renderQuizSummary(area);
+          return;
+        }
+        const question = questions[state.question];
+        const response = state.answers[state.question];
+        const topLine = document.createElement('div');
+        topLine.className = 'quiz-topline';
+        const count = document.createElement('span');
+        count.textContent = `Question ${state.question + 1} of ${questions.length}`;
+        const track = document.createElement('span');
+        track.className = 'quiz-track';
+        track.setAttribute('aria-hidden', 'true');
+        const fill = document.createElement('span');
+        fill.style.width = `${((state.question + 1) / questions.length) * 100}%`;
+        track.append(fill);
+        topLine.append(count, track);
+        area.append(topLine);
+
+        const box = document.createElement('div');
+        box.className = 'question-box';
+        const prompt = document.createElement('h3');
+        prompt.textContent = question.prompt;
+        box.append(prompt);
+        const optionList = document.createElement('div');
+        optionList.className = 'option-list';
+        optionList.setAttribute('role', 'group');
+        optionList.setAttribute('aria-label', `Answer options for question ${state.question + 1}`);
+        question.options.forEach((option, index) => {
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'option-button';
+          button.textContent = option;
+          button.disabled = Boolean(response);
+          if (response && index === question.correct) button.classList.add('is-correct');
+          if (response && index === response.selection && !response.correct) button.classList.add('is-wrong');
+          button.addEventListener('click', () => {
+            if (state.answers[state.question]) return;
+            state.answers[state.question] = { selection: index, correct: index === question.correct };
+            renderQuiz();
+          });
+          optionList.append(button);
+        });
+        box.append(optionList);
+        if (response) {
+          const feedback = document.createElement('div');
+          feedback.className = `feedback${response.correct ? '' : ' wrong'}`;
+          feedback.setAttribute('role', 'status');
+          feedback.textContent = `${response.correct ? 'Yes. ' : 'Not quite. The best answer is: '}${response.correct ? '' : `${question.options[question.correct]} `}${question.why}`;
+          box.append(feedback);
+          const actions = document.createElement('div');
+          actions.className = 'quiz-actions';
+          const next = document.createElement('button');
+          next.type = 'button';
+          next.className = 'primary';
+          next.textContent = state.question === questions.length - 1 ? 'See your review' : 'Next question';
+          next.addEventListener('click', () => {
+            if (state.question === questions.length - 1) {
+              state.quizComplete = true;
+            } else {
+              state.question += 1;
+            }
+            renderQuiz();
+          });
+          actions.append(next);
+          box.append(actions);
+        }
+        area.append(box);
+      }
+
+      function renderQuizSummary(area) {
+        const score = state.answers.filter((answer) => answer && answer.correct).length;
+        navStatus.textContent = 'Self-check complete';
+        const heading = document.createElement('h3');
+        heading.textContent = `You got ${score} out of ${questions.length}.`;
+        const intro = document.createElement('p');
+        intro.className = 'muted';
+        intro.textContent = 'Here is the reasoning behind each answer. A missed question is a useful place to revisit.';
+        const list = document.createElement('div');
+        list.className = 'review-list';
+        questions.forEach((question, index) => {
+          const row = document.createElement('div');
+          row.className = 'review-row';
+          const label = document.createElement('strong');
+          const response = state.answers[index];
+          label.textContent = `Question ${index + 1} · ${response && response.correct ? 'Correct' : 'Review'}`;
+          const explanation = document.createElement('span');
+          explanation.textContent = `${question.options[question.correct]} ${question.why}`;
+          row.append(label, explanation);
+          list.append(row);
+        });
+        const restart = document.createElement('button');
+        restart.type = 'button';
+        restart.className = 'secondary';
+        restart.textContent = 'Try the self-check again';
+        restart.addEventListener('click', () => {
+          state.question = 0;
+          state.answers = [];
+          state.quizComplete = false;
+          renderQuiz();
+        });
+        area.append(heading, intro, list, restart);
+      }
+
+      function updateNavigation() {
+        pages.forEach((page, index) => {
+          const active = index === state.screen;
+          page.classList.toggle('active', active);
+          page.setAttribute('aria-hidden', String(!active));
+        });
+        progressSegments.forEach((segment, index) => {
+          segment.classList.toggle('done', index < state.screen);
+          segment.classList.toggle('current', index === state.screen);
+        });
+        screenLabel.textContent = pages[state.screen].dataset.title;
+        screenNumber.textContent = `${state.screen + 1} of ${pages.length}`;
+        previousButton.disabled = state.screen === 0;
+        const quizIsDone = state.screen === pages.length - 1 && state.quizComplete;
+        nextButton.hidden = state.screen === pages.length - 1;
+        nextButton.textContent = state.screen === 0 ? 'Start with the first idea' : 'Next idea';
+        navStatus.textContent = state.screen === pages.length - 1
+          ? (quizIsDone ? 'Self-check complete' : 'Choose an answer to see feedback')
+          : state.screen === 0 ? 'Start whenever you’re ready' : 'Take your time';
+        if (state.screen === pages.length - 1) renderQuiz();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      previousButton.addEventListener('click', () => {
+        if (state.screen > 0) { state.screen -= 1; updateNavigation(); }
+      });
+      nextButton.addEventListener('click', () => {
+        if (state.screen < pages.length - 1) { state.screen += 1; updateNavigation(); }
+      });
+      document.querySelectorAll('.consistency-slider').forEach((slider) => {
+        slider.addEventListener('input', () => {
+          state.consistency = Number(slider.value);
+          renderTargets();
+        });
+      });
+      document.querySelectorAll('.validity-choice').forEach((button) => {
+        button.addEventListener('click', () => { state.validity = button.dataset.validity; renderTargets(); });
+      });
+      document.querySelectorAll('.item-choice').forEach((button) => {
+        button.addEventListener('click', () => { state.item = button.dataset.item; renderItem(); });
+      });
+      document.querySelectorAll('.match-choice').forEach((button) => {
+        button.addEventListener('click', () => {
+          state.match = button.dataset.match;
+          document.querySelectorAll('.match-choice').forEach((choice) => choice.setAttribute('aria-pressed', String(choice === button)));
+          const feedback = document.getElementById('match-feedback');
+          feedback.textContent = state.match === 'apply'
+            ? 'Yes. It asks students to apply the model and explain the equilibrium change, which matches the goal.'
+            : 'That checks a definition, but the stated goal is application. Choose a question that asks students to reason through a market change.';
+          feedback.className = `match-feedback${state.match === 'apply' ? ' sr-feedback' : ' muted'}`;
+        });
+      });
+
+      renderTargets();
+      renderItem();
+      updateNavigation();
+    })();
+  </script>
+</body>
+</html>
